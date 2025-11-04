@@ -1,4 +1,5 @@
-﻿using CatchEleven.Models;
+﻿using CatchEleven.Constants;
+using CatchEleven.Models;
 using CatchEleven.Models.Symbols;
 
 namespace CatchEleven.Services
@@ -44,7 +45,7 @@ namespace CatchEleven.Services
             int i = 1;
             foreach (var card in Deck.Cards)
             {
-                if (card.Suit.Symbol == "♥" || card.Suit.Symbol == "♦")
+                if (card.Suit.Symbol == Symbol.Hearts || card.Suit.Symbol == Symbol.Diamonds)
                 {
                     Console.ForegroundColor = ConsoleColor.Red;
                 }

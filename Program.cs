@@ -14,6 +14,11 @@ namespace CatchEleven
             Console.WriteLine("---- Perform Shuffle ----");
             deckService.PerformShuffle();
             deckService.DisplayDeck();
+
+            var gameService = new GameService();
+            gameService.StartGame();
+            gameService.Test();
+            gameService.StopGame();
         }
     }
 }
