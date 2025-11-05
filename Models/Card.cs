@@ -2,17 +2,8 @@
 
 namespace CatchEleven.Models
 {
-    public class Card
+    public record Card(string Rank, ISuit Suit)
     {
-        public string Rank { get; }
-        public ISuit Suit { get; }
-
-        public Card(string rank, ISuit suit)
-        {
-            Rank = rank;
-            Suit = suit;
-        }
-
         /// <summary>
         /// Provides a string representation of the card, e.g., "K♠".
         /// </summary>
