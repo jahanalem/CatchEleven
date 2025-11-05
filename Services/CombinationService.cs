@@ -8,8 +8,42 @@ namespace CatchEleven.Services
     {
         public const int TargetScore = 11;
 
+        public static IList<IList<Card>> FindCombinationsForTargetScore(TableCards tableCards, IList<Card> cards)
+        {
+            IList<IList<Card>> allCombinationsFromCurrentHand = new List<IList<Card>>();
+
+            foreach (var card in cards)
+            {
+                if (card.IsFaceCard())
+                {
+                    foreach (var tableCard in tableCards.CardsOnTable)
+                    {
+                        if (tableCard.IsFaceCard() && tableCard.Rank == card.Rank)
+                        {
+                            allCombinationsFromCurrentHand.Add(new List<Card> { card, tableCard });
+                            Console.WriteLine($"Found matching face card combination: {card} and {tableCard}");
+                        }
+                    }
+                    continue;
+                }
+                var combinationsForCard = FindCombinationsForTargetScore(tableCards, card);
+                foreach (var combination in combinationsForCard)
+                {
+                    allCombinationsFromCurrentHand.Add(combination);
+                }
+            }
+
+            return allCombinationsFromCurrentHand;
+        }
+
         public static IList<IList<Card>> FindCombinationsForTargetScore(TableCards tableCards, Card card)
         {
+            if (card.IsFaceCard())
+            {
+                Console.WriteLine($"The played card {card} is a face card. No combinations possible.");
+                return new List<IList<Card>>();
+            }
+
             IList<IList<Card>> allCombinations = new List<IList<Card>>();
             IList<IList<Card>> validCombinations = new List<IList<Card>>();
 
@@ -67,7 +101,8 @@ namespace CatchEleven.Services
         {
             if (combinations == null || combinations.Count == 0)
             {
-                throw new ArgumentException("No combinations provided.");
+                Console.WriteLine("No combinations provided.");
+                return new List<Card>();
             }
 
             IList<Card> bestCombination;

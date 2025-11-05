@@ -1,6 +1,6 @@
 ﻿namespace CatchEleven.Models.Players
 {
-    public class PlayerA : BasePlayer
+    public class Human : BasePlayer
     {
     }
 }

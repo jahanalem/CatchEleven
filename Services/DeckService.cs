@@ -81,25 +81,13 @@ namespace CatchEleven.Services
             }
         }
 
-        public Card? DrawCard()
-        {
-            if (Deck.Cards.Count == 0)
-            {
-                Console.WriteLine("The deck is empty!");
-                return null;
-            }
-            Card drawnCard = Deck.Cards[0];
-            Deck.Cards.RemoveAt(0);
-
-            return drawnCard;
-        }
-
         public Card GetCard(ISuit suit, string rank)
         {
             if (!suit.Ranks.Contains(rank))
             {
                 throw new ArgumentException("Invalid rank provided.");
             }
+
             return new Card(rank, suit);
         }
 
