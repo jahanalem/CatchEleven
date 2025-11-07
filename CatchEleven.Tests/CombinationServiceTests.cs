@@ -40,15 +40,14 @@ namespace CatchEleven.Tests
 
             // --- 2. Act ---
 
-            var possibleCombinations = CombinationService.FindCombinationsForTargetScore(tableCards, humanHand);
-            var actualBestCombination = CombinationService.ChooseBestCombination(possibleCombinations);
+            var actualBestCombination = CombinationService.ChooseBestCombination(tableCards, humanHand);
 
             // --- 3. Assert ---
 
             // We sort both lists before comparing them. This ensures the test doesn't
             // fail just because the cards are in a different order.
-            var sortedExpected = expectedBestCombination.OrderBy(c => c.Rank).ToList();
-            var sortedActual = actualBestCombination.OrderBy(c => c.Rank).ToList();
+            var sortedExpected = expectedBestCombination.OrderBy(c => c.ToString()).ToList();
+            var sortedActual = actualBestCombination.OrderBy(c => c.ToString()).ToList();
 
             // Assert that the actual combination is identical to the expected one.
             Assert.Equal(sortedExpected, sortedActual);
@@ -56,6 +55,70 @@ namespace CatchEleven.Tests
             Assert.Equal(2, actualBestCombination.Count); // It should be a 2-card combination
             Assert.Contains(new Card("4", new Diamonds()), actualBestCombination); // It must contain the Diamond
             Assert.DoesNotContain(new Card("5", new Spades()), actualBestCombination); // It must NOT contain the 5 of Spades
+        }
+
+        [Fact]
+        public void ChooseBestCombination_Should_Select_Jack_To_Take_All_Table_Cards()
+        {
+            // --- 1. Arrange ---
+
+            // Define the card suits needed for the test
+            var hearts = new Hearts();
+            var diamonds = new Diamonds();
+            var spades = new Spades();
+
+            // Scenario:
+            // Hand: 5H, AD, 6H, JS
+            // Table: 10D, 4D, QH, 8S
+            var tableCards = new TableCards()
+            {
+                CardsOnTable = new List<Card>
+                {
+                    new Card("10", diamonds), // 10♦
+                    new Card("4", diamonds),  // 4♦
+                    new Card("Q", hearts),    // Q♥
+                    new Card("8", spades)    // 8♠
+                }
+            };
+
+            var humanHand = new List<Card>
+            {
+                new Card("5", hearts),    // 5♥
+                new Card("A", diamonds),  // A♦
+                new Card("6", hearts),    // 6♥
+                new Card("J", spades)     // J♠ (The card that should be played)
+            };
+
+            // The expected combination is the Jack + ALL cards from the table.
+            var expectedBestCombination = new List<Card>
+            {
+                new Card("10", diamonds), // All table cards
+                new Card("4", diamonds),
+                new Card("Q", hearts),
+                new Card("8", spades),
+                new Card("J", spades)     // The Jack from the hand
+            };
+
+            // --- 2. Act ---
+
+            // Select the best one
+            var actualBestCombination = CombinationService.ChooseBestCombination(tableCards, humanHand);
+
+            // --- 3. Assert ---
+
+            // Sort both lists to ensure the order doesn't cause a test failure.
+            // We sort by the card's string representation (e.g., "10♦", "J♠").
+            var sortedExpected = expectedBestCombination.OrderBy(c => c.ToString()).ToList();
+            var sortedActual = actualBestCombination.OrderBy(c => c.ToString()).ToList();
+
+            // Assert that the actual combination is identical to the expected one.
+            Assert.Equal(sortedExpected, sortedActual);
+
+            // Add more specific asserts to be extra clear
+            Assert.Equal(5, actualBestCombination.Count); // 1 Jack + 4 table cards
+            Assert.Contains(new Card("J", spades), actualBestCombination); // It must contain the Jack
+            Assert.Contains(new Card("Q", hearts), actualBestCombination); // It must contain the Queen from the table
+            Assert.Contains(new Card("10", diamonds), actualBestCombination); // It must contain the 10 from the table
         }
     }
 }

@@ -96,8 +96,8 @@ namespace CatchEleven.Services
         private void RunCombinationTest()
         {
             Console.WriteLine("\n---- 🎯 Combination Analysis ----");
-            var possibleCombinations = CombinationService.FindCombinationsForTargetScore(_tableCards, _humanPlayer.Hand);
-            var bestCombination = CombinationService.ChooseBestCombination(possibleCombinations);
+
+            var bestCombination = CombinationService.ChooseBestCombination(_tableCards, _humanPlayer.Hand);
 
             if (bestCombination.Count == 0)
             {

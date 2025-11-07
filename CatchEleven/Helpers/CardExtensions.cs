@@ -42,6 +42,16 @@ namespace CatchEleven.Helpers
             return card.Rank == "J" || card.Rank == "Q" || card.Rank == "K";
         }
 
+        public static bool IsJack(this Card card)
+        {
+            return card.Rank == "J";
+        }
+
+        public static Card? FindJackOrDefault(this IEnumerable<Card> cards)
+        {
+            return cards.FirstOrDefault(card => card.IsJack());
+        }
+
         public static int CountCardsBySymbol(this IList<Card> cards, string targetSymbol = Symbol.Diamonds)
         {
             int count = 0;

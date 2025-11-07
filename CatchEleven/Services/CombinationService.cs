@@ -132,5 +132,26 @@ namespace CatchEleven.Services
 
             return bestCombination;
         }
+
+        public static IList<Card> ChooseBestCombination(TableCards tableCards, IList<Card> hand)
+        {
+            IList<Card> bestCombination = new List<Card>();
+            var jackCard = hand.FindJackOrDefault();
+            if ((jackCard is not null))
+            {
+                foreach (var tableCard in tableCards.CardsOnTable)
+                {
+                    bestCombination.Add(tableCard);
+                }
+                bestCombination.Add(jackCard);
+            }
+            else
+            {
+                var possibleCombinations = FindCombinationsForTargetScore(tableCards, hand);
+                bestCombination = ChooseBestCombination(possibleCombinations);
+            }
+
+            return bestCombination;
+        }
     }
 }
