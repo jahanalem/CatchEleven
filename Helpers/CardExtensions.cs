@@ -55,7 +55,7 @@ namespace CatchEleven.Helpers
 
             return count;
         }
-        
+
         public static bool IsThere2Diamond(this IList<Card> cards)
         {
             foreach (var card in cards)
@@ -95,19 +95,6 @@ namespace CatchEleven.Helpers
             }
 
             return false;
-        }
-
-        public static Card? DrawCard(this IList<Card> cards)
-        {
-            if (cards.Count == 0)
-            {
-                Console.WriteLine("The deck is empty!");
-                return null;
-            }
-            Card drawnCard = cards[0];
-            cards.RemoveAt(0);
-
-            return drawnCard;
         }
 
         public static void DisplayCards(this IList<Card> cards, string message = "Cards:")

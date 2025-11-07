@@ -1,16 +1,48 @@
 ﻿using CatchEleven.Helpers;
 using CatchEleven.Models;
 using CatchEleven.Models.Players;
+using CatchEleven.Services.Interfaces;
 
 namespace CatchEleven.Services
 {
-    public class GameService
+    public class GameService : IGameService
     {
-        public GameService() { }
+        private readonly DeckService _deckService;
+        private readonly Human _humanPlayer;
+        private readonly Robot _robotPlayer;
+        private readonly TableCards _tableCards;
+
+        public GameService()
+        {
+            _deckService = new DeckService();
+            _humanPlayer = new Human();
+            _robotPlayer = new Robot();
+            _tableCards = new TableCards();
+        }
 
         public void StartGame()
         {
             Console.WriteLine("Game started!\n");
+
+            Console.WriteLine("\n---- 🔀 Shuffling Deck ----");
+            _deckService.PerformShuffle();
+            _deckService.DisplayDeck();
+
+            var humanHand = DistributeCardsForPlayer(_humanPlayer, _deckService.Deck);
+            humanHand.DisplayCards("🧑‍💻 Cards dealt to Human:");
+
+            var robotHand = DistributeCardsForPlayer(_robotPlayer, _deckService.Deck);
+            robotHand.DisplayCards("🤖 Cards dealt to Robot:");
+            _robotPlayer.AddKnownCards(robotHand);
+
+            var tableInitialCards = DistributeCardsForTable(_tableCards, _deckService.Deck);
+            tableInitialCards.DisplayCards("🃏 Cards on the Table:");
+            _robotPlayer.AddKnownCards(tableInitialCards);
+
+            Console.WriteLine("\n🂦 Remaining cards in deck:");
+            _deckService.DisplayDeck();
+
+            RunCombinationTest();
         }
 
         public void StopGame()
@@ -19,7 +51,7 @@ namespace CatchEleven.Services
         }
 
         // Distribute cards to a player
-        public IList<Card> DistributeCardsForPlayer(IBasePlayer player, Deck deck)
+        private IList<Card> DistributeCardsForPlayer(IBasePlayer player, Deck deck)
         {
             Console.WriteLine($"Distributing cards to {player.GetType().Name}...");
 
@@ -27,7 +59,7 @@ namespace CatchEleven.Services
 
             for (int i = 0; i < 4; i++)
             {
-                var drawnCard = deck.Cards.DrawCard();
+                var drawnCard = _deckService.DrawCard();
                 if (drawnCard != null)
                 {
                     dealtCards.Add(drawnCard);
@@ -35,11 +67,12 @@ namespace CatchEleven.Services
             }
 
             player.Hand = dealtCards;
+
             return dealtCards;
         }
 
         // Distribute cards to the table
-        public IList<Card> DistributeCardsForTable(TableCards tableCards, Deck deck)
+        private IList<Card> DistributeCardsForTable(TableCards tableCards, Deck deck)
         {
             Console.WriteLine("Distributing cards to the table...");
 
@@ -47,7 +80,7 @@ namespace CatchEleven.Services
 
             for (int i = 0; i < 4; i++)
             {
-                var drawnCard = deck.Cards.DrawCard();
+                var drawnCard = _deckService.DrawCard();
                 if (drawnCard != null)
                 {
                     tableDealtCards.Add(drawnCard);
@@ -58,8 +91,25 @@ namespace CatchEleven.Services
             return tableDealtCards;
         }
 
+        private void RunCombinationTest()
+        {
+            Console.WriteLine("\n---- 🎯 Combination Analysis ----");
+            var possibleCombinations = CombinationService.FindCombinationsForTargetScore(_tableCards, _humanPlayer.Hand);
+            var bestCombination = CombinationService.ChooseBestCombination(possibleCombinations);
+
+            if (bestCombination.Count == 0)
+            {
+                Console.WriteLine("❌ No valid combinations found.");
+            }
+            else
+            {
+                Console.WriteLine("✅ Best Combination:");
+                Console.WriteLine(string.Join(", ", bestCombination));
+            }
+        }
+
         // Test: Find and display best combination
-        public void Test()
+        private void Test()
         {
             var table = new Models.TableCards
             {

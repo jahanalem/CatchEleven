@@ -1,10 +1,11 @@
 ﻿using CatchEleven.Constants;
 using CatchEleven.Models;
 using CatchEleven.Models.Symbols;
+using CatchEleven.Services.Interfaces;
 
 namespace CatchEleven.Services
 {
-    public class DeckService
+    public class DeckService : IDeckService
     {
         public Deck Deck { get; private set; }
 
@@ -89,6 +90,21 @@ namespace CatchEleven.Services
             }
 
             return new Card(rank, suit);
+        }
+
+        public Card? DrawCard()
+        {
+            var deckCards = Deck.Cards;
+
+            if (deckCards.Count == 0)
+            {
+                Console.WriteLine("The deck is empty!");
+                return null;
+            }
+            Card drawnCard = deckCards[0];
+            deckCards.RemoveAt(0);
+
+            return drawnCard;
         }
 
         public Card GetRandomCardFromSuit(ISuit suit)
