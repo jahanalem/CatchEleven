@@ -44,7 +44,7 @@ namespace CatchEleven.Services
             Console.WriteLine("\n🂦 Remaining cards in deck:");
             _deckService.DisplayDeck();
 
-            RunCombinationTest();
+            TakeRobotTurn();
         }
 
         public void StopGame()
@@ -93,20 +93,58 @@ namespace CatchEleven.Services
             return tableDealtCards;
         }
 
-        private void RunCombinationTest()
+        private void TakeRobotTurn()
         {
-            Console.WriteLine("\n---- 🎯 Combination Analysis ----");
+            Console.WriteLine("\n---- 🤖 Robot's Turn ----");
 
-            var bestCombination = CombinationService.ChooseBestCombination(_tableCards, _humanPlayer.Hand);
+            var bestCombination = CombinationService.ChooseBestCombination(_tableCards, _robotPlayer.Hand);
+            Card playedCard;
 
             if (bestCombination.Count == 0)
             {
-                Console.WriteLine("❌ No valid combinations found.");
+                // --- 1. DISCARD LOGIC ---
+                // No combination found. Robot must discard a card.
+                // The PlayCard(null) method will automatically choose the "worst" card.
+                playedCard = _robotPlayer.PlayCard(null);
+                _tableCards.CardsOnTable.Add(playedCard); 
+                _robotPlayer.AddKnownCard(playedCard);
+                Console.WriteLine($"❌ No combinations found. Robot discards: {playedCard}");
             }
             else
             {
+                // --- 2. CAPTURE LOGIC ---
+                // A combination was found.
+
+                // The last element is the played card
+                playedCard = _robotPlayer.PlayCard(bestCombination.LastOrDefault());
+
+                Console.WriteLine($"\n🃏 Robot played: {playedCard}");
+
+                Console.WriteLine();
+                Console.WriteLine("Robot Hand after playing the card:");
+                _robotPlayer.Hand.DisplayCards();
+
+                var capturedCards = bestCombination.Where(c => c != playedCard).ToList();
+                RemoveCardsFromTable(capturedCards);
+
+                foreach (var card in bestCombination)
+                {
+                    _robotPlayer.CollectedCards.Add(card);
+                }
+
+                Console.WriteLine("\n🃏 Cards remaining on the Table after Robot's play:");
+                _tableCards.CardsOnTable.DisplayCards();
+
                 Console.WriteLine("✅ Best Combination:");
                 Console.WriteLine(string.Join(", ", bestCombination));
+            }
+        }
+
+        private void RemoveCardsFromTable(IList<Card> cardsToRemove)
+        {
+            foreach (var card in cardsToRemove)
+            {
+                _tableCards.CardsOnTable.Remove(card);
             }
         }
     }

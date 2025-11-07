@@ -20,7 +20,7 @@ namespace CatchEleven.Services
                     {
                         if (tableCard.IsFaceCard() && tableCard.Rank == card.Rank)
                         {
-                            allCombinationsFromCurrentHand.Add(new List<Card> { card, tableCard });
+                            allCombinationsFromCurrentHand.Add(new List<Card> { tableCard, card });
                             Console.WriteLine($"Found matching face card combination: {card} and {tableCard}");
                         }
                     }
