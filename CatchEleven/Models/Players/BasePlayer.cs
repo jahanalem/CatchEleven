@@ -7,6 +7,7 @@ namespace CatchEleven.Models.Players
     {
         public IList<Card> Hand { get; set; } = new List<Card>(4);
         public IList<Card> CollectedCards { get; set; } = new List<Card>();
+        public int RoundScore { get; set; }
 
         /// <summary>
         /// Plays a card from the player's hand.

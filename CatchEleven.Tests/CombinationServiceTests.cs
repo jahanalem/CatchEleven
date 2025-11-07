@@ -1,4 +1,6 @@
-﻿using CatchEleven.Models;
+﻿using CatchEleven.Constants;
+using CatchEleven.Models;
+using CatchEleven.Models.Players;
 using CatchEleven.Models.Symbols;
 using CatchEleven.Services;
 
@@ -119,6 +121,104 @@ namespace CatchEleven.Tests
             Assert.Contains(new Card("J", spades), actualBestCombination); // It must contain the Jack
             Assert.Contains(new Card("Q", hearts), actualBestCombination); // It must contain the Queen from the table
             Assert.Contains(new Card("10", diamonds), actualBestCombination); // It must contain the 10 from the table
+        }
+
+        [Fact]
+        public void CalculateRoundScores_Should_Correctly_Score_All_Rules()
+        {
+            // --- 1. Arrange ---
+
+            // Create players
+            var human = new Human();
+            var robot = new Robot();
+
+            // Define suits
+            var diamonds = new Diamonds();
+            var spades = new Spades();
+            var hearts = new Hearts();
+            var clubs = new Clubs();
+
+            // Human: Gets a Basaat point during the round
+            human.RoundScore = Score.Basaat;
+
+            // Human Cards: 5 cards total (Gets "Most Cards" bonus)
+            // - Has 2 Diamonds
+            // - Has the 2 of Diamonds (Gets "2♦" bonus)
+            human.CollectedCards = new List<Card>
+            {
+                new Card("2", diamonds), // 2♦ (+2 points)
+                new Card("7", diamonds),
+                new Card("K", spades),
+                new Card("Q", hearts),
+                new Card("A", clubs)
+            };
+
+            // Robot Cards: 4 cards total
+            // - Has 3 Diamonds (Gets "Most Diamonds" bonus)
+            // - Has the Jack of Diamonds (Gets "J♦" bonus)
+            robot.CollectedCards = new List<Card>
+            {
+                new Card("J", diamonds), // J♦ (+1 point)
+                new Card("3", diamonds),
+                new Card("8", diamonds),
+                new Card("5", spades)
+            };
+
+            // --- Expected Scores ---
+            int expectedHumanScore = Score.Basaat + Score.MostCardsBonus + Score.TwoOfDiamondsBonus;
+            int expectedRobotScore = Score.MostDiamondsBonus + Score.JackOfDiamondsBonus;
+
+            // --- 2. Act ---
+
+            // Calculate the scores
+            var (actualHumanScore, actualRobotScore) = ScoreService.CalculateRoundScores(human, robot);
+
+            // --- 3. Assert ---
+
+            // Check if the calculated scores match the expected scores
+            Assert.Equal(expectedHumanScore, actualHumanScore);
+            Assert.Equal(expectedRobotScore, actualRobotScore);
+        }
+
+        [Fact]
+        public void CalculateRoundScores_Should_Handle_Ties_Correctly()
+        {
+            // --- 1. Arrange ---
+            var human = new Human();
+            var robot = new Robot();
+            var diamonds = new Diamonds();
+            var spades = new Spades();
+
+            // Scenario: Tie in both "Most Cards" and "Most Diamonds"
+            // "If two players tie... nobody gets that bonus."
+
+            // Human: 3 cards, 1 Diamond
+            human.CollectedCards = new List<Card>
+            {
+                new Card("5", diamonds),
+                new Card("K", spades),
+                new Card("Q", spades)
+            };
+
+            // Robot: 3 cards, 1 Diamond
+            robot.CollectedCards = new List<Card>
+            {
+                new Card("6", diamonds),
+                new Card("A", spades),
+                new Card("10", spades)
+            };
+
+            // Expected Scores: 0 for both, as there are no special cards
+            int expectedHumanScore = 0;
+            int expectedRobotScore = 0;
+
+            // --- 2. Act ---
+            var (actualHumanScore, actualRobotScore) = ScoreService.CalculateRoundScores(human, robot);
+
+            // --- 3. Assert ---
+            // Both scores should be 0 because the tie rules prevent bonus points.
+            Assert.Equal(expectedHumanScore, actualHumanScore);
+            Assert.Equal(expectedRobotScore, actualRobotScore);
         }
     }
 }

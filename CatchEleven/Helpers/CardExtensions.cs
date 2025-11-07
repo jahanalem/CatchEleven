@@ -107,6 +107,19 @@ namespace CatchEleven.Helpers
             return false;
         }
 
+        public static bool ContainsJackOfDiamonds(this IList<Card> cards)
+        {
+            foreach (var card in cards)
+            {
+                if (card.Rank == "J" && card.Suit.Symbol == Symbol.Diamonds)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
         public static void DisplayCards(this IList<Card> cards, string message = "Cards:")
         {
             Console.WriteLine(message);
