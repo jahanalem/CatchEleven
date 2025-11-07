@@ -30,14 +30,14 @@ namespace CatchEleven.Services
             _deckService.PerformShuffle();
             _deckService.DisplayDeck();
 
-            var humanHand = DistributeCardsForPlayer(_humanPlayer, _deckService.Deck);
+            var humanHand = DistributeCardsForPlayer(_humanPlayer);
             humanHand.DisplayCards("🧑‍💻 Cards dealt to Human:");
 
-            var robotHand = DistributeCardsForPlayer(_robotPlayer, _deckService.Deck);
+            var robotHand = DistributeCardsForPlayer(_robotPlayer);
             robotHand.DisplayCards("🤖 Cards dealt to Robot:");
             _robotPlayer.AddKnownCards(robotHand);
 
-            var tableInitialCards = DistributeCardsForTable(_tableCards, _deckService.Deck);
+            var tableInitialCards = DistributeCardsForTable(_tableCards);
             tableInitialCards.DisplayCards("🃏 Cards on the Table:");
             _robotPlayer.AddKnownCards(tableInitialCards);
 
@@ -53,7 +53,7 @@ namespace CatchEleven.Services
         }
 
         // Distribute cards to a player
-        private IList<Card> DistributeCardsForPlayer(IBasePlayer player, Deck deck)
+        private IList<Card> DistributeCardsForPlayer(IBasePlayer player)
         {
             Console.WriteLine($"Distributing cards to {player.GetType().Name}...");
 
@@ -74,7 +74,7 @@ namespace CatchEleven.Services
         }
 
         // Distribute cards to the table
-        private IList<Card> DistributeCardsForTable(TableCards tableCards, Deck deck)
+        private IList<Card> DistributeCardsForTable(TableCards tableCards)
         {
             Console.WriteLine("Distributing cards to the table...");
 
