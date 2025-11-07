@@ -133,8 +133,8 @@ namespace CatchEleven.Services
 
                 var capturedCards = bestCombination.Where(c => c != playedCard).ToList();
 
-                // --- Basat Logic ---
-                if (capturedCards.Count == _tableCards.CardsOnTable.Count && !playedCard.IsFaceCard())
+                // --- Basaat Logic ---
+                if (capturedCards.Count == _tableCards.CardsOnTable.Count && !playedCard.IsJack())
                 {
                     Console.WriteLine("🤖 Robot made a Basaat! (captured all table cards)");
                     _robotPlayer.RoundScore += Score.Basaat;
