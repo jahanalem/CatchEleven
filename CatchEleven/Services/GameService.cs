@@ -109,34 +109,5 @@ namespace CatchEleven.Services
                 Console.WriteLine(string.Join(", ", bestCombination));
             }
         }
-
-        // Test: Find and display best combination
-        private void Test()
-        {
-            var table = new Models.TableCards
-            {
-                CardsOnTable = new List<Models.Card>
-                {
-                    new("2", new Models.Symbols.Hearts()),
-                    new("3", new Models.Symbols.Spades()),
-                    new("4", new Models.Symbols.Diamonds()),
-                    new("Q", new Models.Symbols.Spades()),
-                    new("K", new Models.Symbols.Clubs()),
-                    new("10", new Models.Symbols.Diamonds()),
-                    new("9", new Models.Symbols.Diamonds()),
-                    new("J", new Models.Symbols.Clubs())
-                }
-            };
-
-            var targetCard = new Models.Card("2", new Models.Symbols.Hearts());
-
-            var combinations = CombinationService.FindCombinationsForTargetScore(table, targetCard);
-            var bestCombination = CombinationService.ChooseBestCombination(combinations);
-
-            Console.WriteLine("\n----  Best Combination Test ----");
-            Console.WriteLine(bestCombination.Count == 0
-                ? "No valid combinations found."
-                : $"Best combination:\n{string.Join(", ", bestCombination)}");
-        }
     }
 }

@@ -7,5 +7,15 @@
         {
             "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K", "A"
         };
+
+        public override bool Equals(object? obj)
+        {
+            return obj is ISuit other && this.Symbol == other.Symbol;
+        }
+
+        public override int GetHashCode()
+        {
+            return Symbol.GetHashCode();
+        }
     }
 }

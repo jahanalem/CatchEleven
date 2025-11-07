@@ -42,12 +42,12 @@ namespace CatchEleven.Helpers
             return card.Rank == "J" || card.Rank == "Q" || card.Rank == "K";
         }
 
-        public static int CountCardsByRank(this IList<Card> cards, string targetRank = Symbol.Diamonds)
+        public static int CountCardsBySymbol(this IList<Card> cards, string targetSymbol = Symbol.Diamonds)
         {
             int count = 0;
             foreach (var card in cards)
             {
-                if (card.Rank == targetRank)
+                if (card.Suit.Symbol == targetSymbol)
                 {
                     count++;
                 }
@@ -73,7 +73,7 @@ namespace CatchEleven.Helpers
         {
             int totalWeight = 0;
             int bonusWeight = 0;
-            var diamondCount = cards.CountCardsByRank(Symbol.Diamonds);
+            var diamondCount = cards.CountCardsBySymbol(Symbol.Diamonds);
             var totalCards = cards.Count;
             if (cards.ContainsTwoOfDiamonds())
             {

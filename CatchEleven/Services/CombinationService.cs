@@ -122,7 +122,7 @@ namespace CatchEleven.Services
                 var diamondCombination = combination.Where(c => c.Suit.Symbol == Symbol.Diamonds).ToList();
                 if (diamondCombination.Count > combinationWithMostDiamonds.Count())
                 {
-                    combinationWithMostDiamonds = diamondCombination;
+                    combinationWithMostDiamonds = combination;
                 }
             }
 
