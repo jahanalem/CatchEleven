@@ -7,14 +7,16 @@ namespace CatchEleven.Services
 {
     public class GameService : IGameService
     {
-        private readonly DeckService _deckService;
+        private readonly IDeckService _deckService;
+
         private readonly Human _humanPlayer;
         private readonly Robot _robotPlayer;
         private readonly TableCards _tableCards;
 
-        public GameService()
+        public GameService(IDeckService deckService)
         {
-            _deckService = new DeckService();
+            _deckService = deckService;
+
             _humanPlayer = new Human();
             _robotPlayer = new Robot();
             _tableCards = new TableCards();
