@@ -15,6 +15,9 @@ namespace CatchEleven.Services
         private readonly Robot _robotPlayer;
         private readonly TableCards _tableCards;
 
+        private IBasePlayer _currentPlayer;
+        private readonly Random _random = new Random();
+
         private int _humanTotalScore = 0;
         private int _robotTotalScore = 0;
 
@@ -33,24 +36,69 @@ namespace CatchEleven.Services
 
             Console.WriteLine("\n---- 🔀 Shuffling Deck ----");
             _deckService.PerformShuffle();
-            _deckService.DisplayDeck();
+            //_deckService.DisplayDeck();
 
-            var humanHand = DistributeCardsForPlayer(_humanPlayer);
-            humanHand.DisplayCards("🧑‍💻 Cards dealt to Human:");
+            // 1. Initial Deal (as per rules)
+            DistributeCardsForPlayer(_humanPlayer);
+            DistributeCardsForPlayer(_robotPlayer);
+            DistributeCardsForTable(_tableCards);
 
-            var robotHand = DistributeCardsForPlayer(_robotPlayer);
-            robotHand.DisplayCards("🤖 Cards dealt to Robot:");
-            _robotPlayer.AddKnownCards(robotHand);
+            // test code to show hands at start
+            _humanPlayer.Hand.DisplayCards("🧑‍💻 Cards dealt to Human:");
+            _robotPlayer.Hand.DisplayCards("🤖 Cards dealt to Robot:");
+            _robotPlayer.AddKnownCards(_robotPlayer.Hand); // Robot knows its own hand
+            _tableCards.CardsOnTable.DisplayCards("🃏 Cards on the Table:");
+            _robotPlayer.AddKnownCards(_tableCards.CardsOnTable);
 
-            var tableInitialCards = DistributeCardsForTable(_tableCards);
-            tableInitialCards.DisplayCards("🃏 Cards on the Table:");
-            _robotPlayer.AddKnownCards(tableInitialCards);
+            // 2. Choose starting player randomly
+            _currentPlayer = (_random.Next(2) == 0) ? _humanPlayer : _robotPlayer;
+            Console.WriteLine($"\n🎉 {_currentPlayer.GetType().Name} will start the game!");
+            Console.WriteLine("Press Enter to start...");
+            Console.ReadLine();
 
-            Console.WriteLine("\n🂦 Remaining cards in deck:");
-            _deckService.DisplayDeck();
+            // 3. Main Game Loop
+            while (true)
+            {
+                // 3a. Check if hands are empty to deal new ones
+                if (_humanPlayer.Hand.Count == 0 && _robotPlayer.Hand.Count == 0)
+                {
+                    // Check if the deck is also empty
+                    if (_deckService.Deck.Cards.Count == 0)
+                    {
+                        Console.WriteLine("\nAll cards have been played!");
+                        break; // Exit the main game loop (game over)
+                    }
 
-            //TakeRobotTurn();
-            TakeHumanTurn();
+                    // Deck is not empty, deal new hands (Rule: no new cards to table)
+                    Console.WriteLine("\n---- 🤲 Dealing new hands (4 cards each) ----");
+                    DistributeCardsForPlayer(_humanPlayer);
+                    DistributeCardsForPlayer(_robotPlayer);
+
+                    // (Show hands again for testing)
+                    _humanPlayer.Hand.DisplayCards("🧑‍💻 New Hand Human:");
+                    _robotPlayer.Hand.DisplayCards("🤖 New Hand Robot:");
+                    _robotPlayer.AddKnownCards(_robotPlayer.Hand);
+                }
+
+                // 3b. Play the turn
+                if (_currentPlayer == _humanPlayer)
+                {
+                    TakeHumanTurn();
+                    _currentPlayer = _robotPlayer; // Switch turn
+                }
+                else
+                {
+                    TakeRobotTurn();
+                    _currentPlayer = _humanPlayer; // Switch turn
+                }
+
+                // Optional: Pause to let user read
+                Console.WriteLine("\nPress Enter to continue to the next turn...");
+                Console.ReadLine();
+            }
+
+            // 4. The loop is broken, the game is over.
+            // Program.cs will now call StopGame() which calculates the score.
         }
 
         public void StopGame()
@@ -105,6 +153,11 @@ namespace CatchEleven.Services
         private void TakeRobotTurn()
         {
             Console.WriteLine("\n---- 🤖 Robot's Turn ----");
+
+            // --- Added for testing ---
+            _robotPlayer.Hand.DisplayCards("🤖 Robot Hand (Before Play):");
+            _tableCards.CardsOnTable.DisplayCards("🃏 Cards on Table (Before Play):");
+            // --- End of testing addition ---
 
             var bestCombination = CombinationService.ChooseBestCombination(_tableCards, _robotPlayer.Hand);
             Card playedCard;
@@ -219,8 +272,8 @@ namespace CatchEleven.Services
             Console.WriteLine();
             _humanPlayer.Hand.DisplayCards("Your Hand (After Play):");
 
-            Console.WriteLine("\n🃏 Cards remaining on the Table (After Play):");
-            _tableCards.CardsOnTable.DisplayCards();
+            //Console.WriteLine("\n🃏 Cards remaining on the Table (After Play):");
+            //_tableCards.CardsOnTable.DisplayCards();
         }
 
         private Card AskHumanToPlayCard()
@@ -328,6 +381,7 @@ namespace CatchEleven.Services
             else
             {
                 // Discard
+                Console.WriteLine($"Table is empty. The Jack is placed on the table.");
                 HandleDiscard(player, playedCard);
             }
         }
@@ -356,6 +410,7 @@ namespace CatchEleven.Services
             else
             {
                 // Discard
+                Console.WriteLine($"It doesn't capture anything and is placed on the table.");
                 HandleDiscard(player, playedCard);
             }
         }
