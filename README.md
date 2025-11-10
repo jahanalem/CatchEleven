@@ -93,7 +93,7 @@ you can take those cards.
 ### 💥 Special Bonus — Basaat (Clear Table)
 If you clear **all cards** from the table in one move  
 (and not by using a Jack),  
-you earn **+1 bonus point** called *Basaat*.
+you earn **+10 bonus point** called *Basaat*.
 
 ---
 
@@ -107,7 +107,7 @@ When all 52 cards are played, count each player’s captured cards.
 | 💎 **Most Diamonds (♦)** | Player with the most ♦ cards | +1 |
 | ♦️ **Two of Diamonds (2♦)** | Always worth | +2 |
 | 🤴 **Jack of Diamonds (J♦)** | Always worth | +1 |
-| 🌟 **Basaat (Clear Table)** | Clearing the table (not with Jack) | +1 |
+| 🌟 **Basaat (Clear Table)** | Clearing the table (not with Jack) | +10 |
 
 > ⚠️ If two players tie in total cards or Diamonds,  
 > nobody gets that bonus.
@@ -136,7 +136,7 @@ When all 52 cards are played, count each player’s captured cards.
 | **Hand** | The cards currently in a player’s hand |
 | **Table Cards** | Cards visible on the table |
 | **Captured Cards** | Cards a player has taken and kept |
-| **Basaat** | Clearing the table for +1 point |
+| **Basaat** | Clearing the table for +10 point |
 | **Round** | One full playthrough of the deck |
 
 ---
