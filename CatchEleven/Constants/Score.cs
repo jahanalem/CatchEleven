@@ -9,7 +9,7 @@
         /// <summary>
         /// Points for clearing the table (not with a Jack).
         /// </summary>
-        public const int Basaat = 1;
+        public const int Basaat = 10;
 
         /// <summary>
         /// Points for capturing the most cards.
@@ -30,5 +30,10 @@
         /// Points for capturing the Jack of Diamonds (J♦).
         /// </summary>
         public const int JackOfDiamondsBonus = 1;
+
+        /// <summary>
+        /// The total score needed to win the game.
+        /// </summary>
+        public const int TargetWinScore = 62;
     }
 }

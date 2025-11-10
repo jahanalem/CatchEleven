@@ -30,15 +30,46 @@ namespace CatchEleven.Services
             _tableCards = new TableCards();
         }
 
+
         public void StartGame()
         {
-            Console.WriteLine("Game started!\n");
+            Console.WriteLine("🎴 Welcome to Catch Eleven!\n");
 
+            // It runs as long as no player has reached the target score
+            while (_humanTotalScore < Score.TargetWinScore && _robotTotalScore < Score.TargetWinScore)
+            {
+                // 1. Play one full round (deals 52 cards)
+                RunRound();
+
+                // 2. Calculate and display the scores for that round
+                CalculateAndDisplayScores();
+
+                // 3. Check if we need to play another round
+                if (_humanTotalScore < Score.TargetWinScore && _robotTotalScore < Score.TargetWinScore)
+                {
+                    Console.WriteLine("\n Press Enter to start the next round...");
+                    Console.ReadLine();
+                }
+            }
+
+            // The game is over, Program.cs will call StopGame()
+        }
+
+        public void RunRound()
+        {
+            Console.WriteLine("\n---- 🔄 Starting New Round ----");
+
+            // 1. Reset deck and all card piles for a new round
+            _deckService.ResetDeck();
+            _tableCards.CardsOnTable.Clear();
+            _humanPlayer.CollectedCards.Clear();
+            _robotPlayer.CollectedCards.Clear();
+            _robotPlayer.KnownCards.Clear();
             Console.WriteLine("\n---- 🔀 Shuffling Deck ----");
             _deckService.PerformShuffle();
             //_deckService.DisplayDeck();
 
-            // 1. Initial Deal (as per rules)
+            // 2. Initial Deal (as per rules)
             DistributeCardsForPlayer(_humanPlayer);
             DistributeCardsForPlayer(_robotPlayer);
             DistributeCardsForTable(_tableCards);
@@ -50,16 +81,16 @@ namespace CatchEleven.Services
             _tableCards.CardsOnTable.DisplayCards("🃏 Cards on the Table:");
             _robotPlayer.AddKnownCards(_tableCards.CardsOnTable);
 
-            // 2. Choose starting player randomly
+            // 3. Choose starting player randomly
             _currentPlayer = (_random.Next(2) == 0) ? _humanPlayer : _robotPlayer;
             Console.WriteLine($"\n🎉 {_currentPlayer.GetType().Name} will start the game!");
             Console.WriteLine("Press Enter to start...");
             Console.ReadLine();
 
-            // 3. Main Game Loop
+            // 4. Main Game Loop (for this round)
             while (true)
             {
-                // 3a. Check if hands are empty to deal new ones
+                // 4a. Check if hands are empty to deal new ones
                 if (_humanPlayer.Hand.Count == 0 && _robotPlayer.Hand.Count == 0)
                 {
                     // Check if the deck is also empty
@@ -80,7 +111,7 @@ namespace CatchEleven.Services
                     _robotPlayer.AddKnownCards(_robotPlayer.Hand);
                 }
 
-                // 3b. Play the turn
+                // 4b. Play the turn
                 if (_currentPlayer == _humanPlayer)
                 {
                     TakeHumanTurn();
@@ -97,8 +128,7 @@ namespace CatchEleven.Services
                 Console.ReadLine();
             }
 
-            // 4. The loop is broken, the game is over.
-            // Program.cs will now call StopGame() which calculates the score.
+            // 5. The round is over.
         }
 
         public void StopGame()
