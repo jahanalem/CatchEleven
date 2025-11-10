@@ -47,6 +47,11 @@ namespace CatchEleven.Helpers
             return card.Rank == "J";
         }
 
+        public static bool IsKingOrQueen(this Card card)
+        {
+            return card.Rank == "K" || card.Rank == "Q";
+        }
+
         public static Card? FindJackOrDefault(this IEnumerable<Card> cards)
         {
             return cards.FirstOrDefault(card => card.IsJack());
