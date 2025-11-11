@@ -1,11 +1,33 @@
 ## 🃏 About Catch Eleven
 
-On my return trip from **Berlin**, late at night on the train, I decided to start developing **Catch Eleven**, a classic Persian card game.  
-I wanted to spend my time on something **useful, educational, and fun** — and maybe make the journey feel a little shorter.  
+On my return trip from **Berlin**, late at night on the train, I decided to start developing **Catch Eleven**, a classic Persian card game.
+I wanted to spend my time on something **useful, educational, and fun** — and maybe make the journey feel a little shorter.
 
-During that trip, I built the **fundamental structure** of the program, and I’ll continue improving it in the future.  
-For now, it’s **UNDER CONSTRUCTION**! 🚧😄
+During that trip, I built the fundamental structure of the program, and I’ll continue improving it in the future.
 
+## 🏗️ Project Architecture
+
+This project uses **Clean Architecture**. This separates the code into different layers. This makes the project easy to test, maintain, and add new features to.
+
+The solution is split into these main projects:
+
+* **`src/CatchEleven.Domain`**: Holds the core game models (like `Card`, `Player`) and rules.
+* **`src/CatchEleven.Application`**: Contains all the game logic, or "how to play" (like `GameService`).
+* **`src/CatchEleven.Infrastructure`**: Implements services that talk to the "outside world," like the console.
+* **`src/CatchEleven.ConsoleUI`**: The main application that starts the game. It connects all the layers.
+* **`tests/CatchEleven.Tests`**: Unit tests for the core logic, written using **XUnit.net**.
+
+
+
+## 💻 UI (User Interface)
+
+Because of the Clean Architecture, the core game logic (`Application` and `Domain`) does not know about the `ConsoleUI`.
+
+This means the project is ready for any new UI. We can add a **WPF**, or **Web API + Angular** project. The main game logic will not need to change.
+
+The plan for the future is to add an **Angular** front end.
+
+---
 
 ## 🃏 Game Rules — Catch Eleven
 
