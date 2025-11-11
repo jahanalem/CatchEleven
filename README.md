@@ -161,7 +161,30 @@ When all 52 cards are played, count each player’s captured cards.
 | **Basaat** | Clearing the table for +10 point |
 | **Round** | One full playthrough of the deck |
 
----
 
+-----
 
+## 🚀 Project Showcase
+
+Here are a few images of the project in action.
+
+### Game Start
+
+The console application starting a new round and dealing cards.
+![01](https://github.com/user-attachments/assets/0b18e031-3e16-46c7-8ac9-264dad5ba299)
+
+### Gameplay Example
+
+A player's turn, showing the hand, table, and how to capture cards.
+![02](https://github.com/user-attachments/assets/0361ad9c-b58c-4c7e-b79e-eed3a8a5e38e)
+
+### Unit Tests
+
+All XUnit tests passing in the Visual Studio Test Explorer.
+![03](https://github.com/user-attachments/assets/a246b48d-93b4-4843-88bb-f775724ab5b8)
+
+### Code Metrics
+
+A snapshot of the solution's code metrics, showing high maintainability across all projects.
+![04](https://github.com/user-attachments/assets/83f1e10b-a830-4926-9608-3a0b8c77af62)
 
