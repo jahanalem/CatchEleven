@@ -164,6 +164,128 @@ When all 52 cards are played, count each player’s captured cards.
 
 -----
 
+# 🔄 Game Flow Architecture
+
+## 🎮 Overall Game Flow
+
+```mermaid
+graph TD
+    A[🎮 Start Game] --> B[Initialize Services & Players]
+    B --> C{Main Game Loop<br>Scores < Target?}
+    
+    C -->|Yes| D[🔄 Run Round]
+    D --> E[Reset Deck & Clear Collections]
+    E --> F[🔀 Shuffle Deck]
+    F --> G[🤲 Deal Initial Cards<br>4 each player + 4 table]
+    G --> H[🎲 Choose Starting Player Randomly]
+    H --> I{Round Loop}
+    
+    I --> J{Hands Empty?}
+    J -->|Yes| K{Deck Empty?}
+    K -->|No| L[🤲 Deal New Hands<br>4 cards each]
+    L --> I
+    K -->|Yes| M[🧮 Calculate Round Scores]
+    
+    J -->|No| N{Current Player}
+    N -->|Human| O[🧑‍💻 Human Turn]
+    N -->|Robot| P[🤖 Robot Turn]
+    O --> Q[🔄 Switch Player]
+    P --> Q
+    Q --> I
+    
+    M --> C
+    C -->|No| R[🏆 Game Over]
+```
+
+## 🧑‍💻 Human Turn Flow
+
+```mermaid
+graph TD
+    A[🧑‍💻 Human Turn] --> B[Display Table & Hand]
+    B --> C[Get Card Choice from Input]
+    C --> D[Play Selected Card]
+    
+    D --> E{Card Type?}
+    E -->|Jack| F[HandleJackPlay]
+    E -->|King/Queen| G[HandleKingQueenPlay]
+    E -->|Number Card| H[Find Sum-to-11 Combinations]
+    
+    F --> I{Table Empty?}
+    I -->|No| J[🎯 Capture All Cards]
+    I -->|Yes| K[📤 Discard to Table]
+    
+    G --> L{Matching Card on Table?}
+    L -->|Yes| M[🤝 Capture Pair + Check Basaat]
+    L -->|No| K
+    
+    H --> N{Combinations Found?}
+    N -->|Yes| O[Let Human Choose Combination]
+    O --> P[🎯 Capture Combination + Check Basaat]
+    N -->|No| K
+    
+    J --> Q[End Turn]
+    M --> Q
+    P --> Q
+    K --> Q
+```
+
+## 🤖 Robot Turn Flow
+
+```mermaid
+graph TD
+    A[🤖 Robot Turn] --> B[ChooseBestCombination]
+    
+    B --> C{Has Jack?}
+    C -->|Yes| D[🎯 Take All Table Cards]
+    C -->|No| E[Find All Possible Combinations]
+    
+    E --> F{Combinations Found?}
+    F -->|Yes| G[Evaluate Combinations by:<br>- Card Count<br>- Diamond Presence<br>- Weighted Score]
+    F -->|No| H[📤 Discard Worst Card]
+    
+    G --> I[Execute Best Combination]
+    D --> J[End Turn]
+    I --> J
+    H --> J
+```
+
+## 🧮 Scoring Flow
+
+```mermaid
+graph TD
+    A[🧮 Calculate Scores] --> B[Start with Round Scores<br>Includes Basaat +10 if achieved]
+    B --> C[Most Cards Bonus: +3]
+    C --> D[Most Diamonds Bonus: +1]
+    D --> E[Special Card Bonuses]
+    
+    E --> F{Has 2♦?}
+    F -->|Yes| G[+2 Points]
+    F -->|No| H[No Bonus]
+    
+    G --> I{Has J♦?}
+    H --> I
+    
+    I -->|Yes| J[+1 Point]
+    I -->|No| K[No Bonus]
+    
+    J --> L[Update Total Scores]
+    K --> L
+```
+
+## 💥 Basaat Detection Flow (During Gameplay)
+
+```mermaid
+graph TD
+    A[🎯 Player Captures Cards] --> B{Table Cleared?<br>All cards captured}
+    B -->|Yes| C{Used Jack?}
+    C -->|No| D[💥 Basaat! +10 Points]
+    C -->|Yes| E[❌ No Basaat<br>Jack doesn't count]
+    D --> F[Add to player's RoundScore]
+    B -->|No| G[Continue Normal Play]
+```
+
+---
+
 ## 🚀 Project Showcase
 
 Here are a few images of the project in action.
